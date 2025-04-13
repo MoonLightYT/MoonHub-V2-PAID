@@ -19,19 +19,34 @@ local Tabs = {
     Main = Window:AddTab({ Title = "Main", Icon = "0" }),
 }
 
--- Added missing 'Tab.' to refer to the correct tab
-local Slider = Tabs.Main:AddSlider("Slider", 
-{
-    Title = "Size changer",
-    Description = "This changes your size",
-    Default = 2,
-    Min = 1,
-    Max = 100,
-    Rounding = 1,
+local Options = Library.Options  
+local MainSection = Tabs.Main:CreateSection("Basic Controls")
+local selectedSize = "2"
+
+local Input = MainSection:AddInput("SizeChanger", {
+    Title = "Size Changer",
+    Description = "Enter Size",
+    Default = "2",
+    Placeholder = "Type here...",
+    Numeric = true,
+    Finished = true,
     Callback = function(Value)
         selectedSize = Value
         if _G.AutoSize then
             game:GetService("ReplicatedStorage").rEvents.changeSpeedSizeRemote:InvokeServer("changeSize", tonumber(selectedSize))
         end
     end
+})
+
+local Toggle = Tabs.Main:CreateToggle("AutoSize", {
+	Title = "Auto Set Size",
+	Description = "Auto Set ur Choosed Size",
+	Default = false,
+	Callback = function(Value)
+		_G.AutoSize = Value
+		while _G.AutoSize do
+			game:GetService("ReplicatedStorage").rEvents.changeSpeedSizeRemote:InvokeServer("changeSize", tonumber(selectedSize))
+			task.wait(0.1)
+		end
+	end
 })
