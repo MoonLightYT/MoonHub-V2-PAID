@@ -2,7 +2,7 @@ local Library = loadstring(game:HttpGetAsync("https://github.com/ActualMasterOog
 local SaveManager = loadstring(game:HttpGetAsync("https://raw.githubusercontent.com/ActualMasterOogway/Fluent-Renewed/master/Addons/SaveManager.luau"))()
 local InterfaceManager = loadstring(game:HttpGetAsync("https://raw.githubusercontent.com/ActualMasterOogway/Fluent-Renewed/master/Addons/InterfaceManager.luau"))()
 
--- Ã°Å¸Â  CrÃƒÂ©ation de la fenÃƒÂªtre principale
+-- Création de la fenêtre principale
 local Window = Library:CreateWindow{
     Title = "MoonHub",
     SubTitle = "By Godlike",
@@ -12,26 +12,26 @@ local Window = Library:CreateWindow{
     MinSize = Vector2.new(470, 380),
     Acrylic = true,
     Theme = "Light",
-      MinimizeKey = Enum.KeyCode.RightControl
-
+    MinimizeKey = Enum.KeyCode.RightControl
+} -- Added closing curly brace here
 
 local Tabs = {
     Main = Window:AddTab({ Title = "Main", Icon = "0" }),
 }
 
-local Slider = Tab.Main:AddSlider("Slider", 
+-- Added missing 'Tab.' to refer to the correct tab
+local Slider = Tabs.Main:AddSlider("Slider", 
 {
     Title = "Size changer",
-    Description = "This changes ur size",
+    Description = "This changes your size",
     Default = 2,
     Min = 1,
     Max = 100,
     Rounding = 1,
     Callback = function(Value)
-       selectedSize = Value
+        selectedSize = Value
         if _G.AutoSize then
             game:GetService("ReplicatedStorage").rEvents.changeSpeedSizeRemote:InvokeServer("changeSize", tonumber(selectedSize))
         end
     end
-}) 
-    
+})
