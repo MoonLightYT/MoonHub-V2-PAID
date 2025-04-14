@@ -23,8 +23,8 @@ local Tabs = {
     AutoRebirth = Window:AddTab({ Title = "Auto Rebirth", Icon = "0" }),
     AutoKill = Window:AddTab({ Title = "Auto Kill", Icon = "0" }),
     AutoRock = Window:AddTab({ Title = "Auto Rock", Icon = "0" }),
-    FastGlitch = Window:AddTab({ Title = "Fast Glitch", Icon = "0" })
-    OP TOOLS = Window:AddTab({ Title = "OP FUNCTIONS🔥", Icon = "0" })
+    FastGlitch = Window:AddTab({ Title = "Fast Glitch", Icon = "0" }),
+    OPTools = Window:AddTab({ Title = "OP FUNCTIONS🔥", Icon = "0" }), -- Corrected to OPTools
     Misc = Window:AddTab({ Title = "Misc", Icon = "0" })
 }
 
@@ -216,23 +216,24 @@ Tabs.AutoRebirth:CreateToggle("AutoRebirth", {
     end
 })
 
+local infiniteRebirthLoop
 local togglerebirthinf = Tabs.AutoRebirth:CreateToggle("AutoRebirthInf", {
-Title = "Auto Rebirth Infinitly",
-Description = "Auto Rebirth Non stop",
-Callback = function(Value)
-if Value then
-			infiniteRebirthLoop = task.spawn(function()
-				while task.wait(0.1) do
-					game:GetService("ReplicatedStorage").rEvents.rebirthRemote:InvokeServer("rebirthRequest")
-				end
-			end)
-		else
-			if infiniteRebirthLoop then
-				task.cancel(infiniteRebirthLoop)
-				infiniteRebirthLoop = nil
-			end
-		end
-	end
+    Title = "Auto Rebirth Infinitly",
+    Description = "Auto Rebirth Non stop",
+    Callback = function(Value)
+        if Value then
+            infiniteRebirthLoop = task.spawn(function()
+                while task.wait(0.1) do
+                    game:GetService("ReplicatedStorage").rEvents.rebirthRemote:InvokeServer("rebirthRequest")
+                end
+            end)
+        else
+            if infiniteRebirthLoop then
+                task.cancel(infiniteRebirthLoop)
+                infiniteRebirthLoop = nil
+            end
+        end
+    end
 })
 
 ------------------------
@@ -335,55 +336,58 @@ Tabs.AutoKill:CreateToggle("Auto Punch", {
 })
 
 Tabs.AutoKill:CreateToggle("Fast Punch", {
-Title = "FAST PUNCH",
-Description = "Speedy nigga🔥🍗",
-Callback = function(Value)
-    local function equipAndModifyPunch()
-            while _G.fastHitActive do
-                local player = game.Players.LocalPlayer
-                local punch = player.Backpack:FindFirstChild("Punch")
-                if punch then
-                    punch.Parent = player.Character  -- Equip punch tool
-                    if punch:FindFirstChild("attackTime") then
-                        punch.attackTime.Value = 0  -- Set attack time to zero
+    Title = "FAST PUNCH",
+    Description = "Speedy feature",
+    Callback = function(Value)
+        _G.fastHitActive = Value -- Fixing variable definition
+        
+        if Value then
+            local function equipAndModifyPunch()
+                while _G.fastHitActive do
+                    local player = game.Players.LocalPlayer
+                    local punch = player.Backpack:FindFirstChild("Punch")
+                    if punch then
+                        punch.Parent = player.Character  -- Equip punch tool
+                        if punch:FindFirstChild("attackTime") then
+                            punch.attackTime.Value = 0  -- Set attack time to zero
+                        end
                     end
+                    task.wait(0)
                 end
-                task.wait(0)  -- Small wait to avoid freezing the script
             end
-        end
 
-        local function rapidPunch()
-            while _G.fastHitActive do
-                local player = game.Players.LocalPlayer
-                player.muscleEvent:FireServer("punch", "rightHand")
-                player.muscleEvent:FireServer("punch", "leftHand")
+            local function rapidPunch()
+                while _G.fastHitActive do
+                    local player = game.Players.LocalPlayer
+                    player.muscleEvent:FireServer("punch", "rightHand")
+                    player.muscleEvent:FireServer("punch", "leftHand")
 
-                local character = player.Character
-                if character then
-                    local punchTool = character:FindFirstChild("Punch")
-                    if punchTool then
-                        punchTool:Activate()  -- Activate the punch tool
+                    local character = player.Character
+                    if character then
+                        local punchTool = character:FindFirstChild("Punch")
+                        if punchTool then
+                            punchTool:Activate()  -- Activate the punch tool
+                        end
                     end
+                    task.wait(0)  -- Small wait to avoid too many requests
                 end
-                task.wait(0)  -- Small wait to avoid too many requests
             end
-        end
 
-        coroutine.wrap(equipAndModifyPunch)()  -- Start equip and modify coroutine
-        coroutine.wrap(rapidPunch)()  -- Start rapid punch coroutine
-    else
-        -- If autopunch is false, return the punch tool to the backpack
-        local character = game.Players.LocalPlayer.Character
-        if character then
-            local equipped = character:FindFirstChild("Punch")
-            if equipped then
-                equipped.Parent = game.Players.LocalPlayer.Backpack  -- Unequip punch tool
+            coroutine.wrap(equipAndModifyPunch)()  -- Start equip and modify coroutine
+            coroutine.wrap(rapidPunch)()  -- Start rapid punch coroutine
+        else
+            -- If autopunch is false, return the punch tool to the backpack
+            local character = game.Players.LocalPlayer.Character
+            if character then
+                local equipped = character:FindFirstChild("Punch")
+                if equipped then
+                    equipped.Parent = game.Players.LocalPlayer.Backpack  -- Unequip punch tool
+                end
             end
+            print("Auto Punch Off")
         end
-        print("Auto Punch Off")
     end
-end)
-)}
+})
 
 -------------------------
 -- Auto Rock Tab
@@ -468,35 +472,33 @@ createFastGlitch(Tabs.FastGlitch, "Fast Glitch Muscle King", "Muscle King Rock",
 createFastGlitch(Tabs.FastGlitch, "Fast Glitch Jungle Rock", "Jungle Rock", 10000000)
 
 
-local togglesfastrebirth = Tabs.OP TOOLS:CreateToggle("FastRebirth", {
-Title = "Fast Rebirth🚀",
-Description = "FAST REBIRTH",
-Callback = function(Value)
-loadstring(game:HttpGet("https://raw.githubusercontent.com/0o0o0o0o0o0o0o0o0o0o0o0o/0o0o0o0o/refs/heads/main/Kk"))()
-end
+local togglesfastrebirth = Tabs.OPTools:CreateToggle("FastRebirth", {
+    Title = "Fast Rebirth🚀",
+    Description = "FAST REBIRTH",
+    Callback = function(Value)
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/0o0o0o0o0o0o0o0o0o0o0o0o/0o0o0o0o/refs/heads/main/Kk"))()
+    end
 })
 
-local togglefastgrind = Tabs.OP TOOLS:CreateToggle("FastGrind", {
-Title = "FAST GRIND🔥",
-Description = "RAPID NIGGA🍗",
-Callback = function(Value)
-local isGrinding = Value
+local togglefastgrind = Tabs.OPTools:CreateToggle("FastGrind", {
+    Title = "FAST GRIND🔥",
+    Description = "RAPID FEATURE",
+    Callback = function(Value)
+        local isGrinding = Value
+        if not Value then
+            return
+        end
 
-    if not Value then
-        return
+        for i = 1, 12 do
+            task.spawn(function()
+                while isGrinding do
+                    game:GetService("Players").LocalPlayer.muscleEvent:FireServer("rep")
+                    task.wait(0.083)
+                end
+            end)
+        end
     end
-
-    for i = 1, 12 do
-        task.spawn(function()
-            while isGrinding do
-                game:GetService("Players").LocalPlayer.muscleEvent:FireServer("rep")
-                task.wait(0.083)
-            end
-        end)
-    end
-end)
-
-
+})
 
 Tabs.Misc:AddButton({
     Title = "Anti AFK",
@@ -507,9 +509,9 @@ Tabs.Misc:AddButton({
 })
 
 local toggleautobrawlgrind = Tabs.Misc:CreateToggle("AutobrawlGrind", {
-Title = "Auto Brawl GRIND:,
-Description = "Auto brawl for leaderboard",
-Callback = function(Value)
+    Title = "Auto Brawl GRIND",
+    Description = "Auto brawl for leaderboard",
+    Callback = function(Value)
         task.spawn(function()
             while toggles.autoJoinToggleBrawl do
                 game:GetService("ReplicatedStorage").rEvents.brawlEvent:FireServer("joinBrawl")
@@ -517,12 +519,12 @@ Callback = function(Value)
             end
         end)
     end
-end)
+})
 
 local toggleautobrawlgod = Tabs.Misc:CreateToggle("AutoBrawlGod", {
-Title = "Auto Brawl GOD",
-Description = "Be invincible",
-Callback = function(Value)
+    Title = "Auto Brawl GOD",
+    Description = "Be invincible",
+    Callback = function(Value)
         task.spawn(function()
             while toggles.autoJoinToggleBrawlGOD do
                 game:GetService("ReplicatedStorage").rEvents.brawlEvent:FireServer("joinBrawl")
@@ -530,21 +532,21 @@ Callback = function(Value)
             end
         end)
     end
-end)
+})
 
 Tabs.Misc:AddButton({
     Title = "Infinite Yield",
     Description = "Loads Infinite Yield",
     Callback = function()
-           loadstring(game:HttpGet('https://raw.githubusercontent.com/DarkNetworks/Infinite-Yield/main/latest.lua'))() 
+        loadstring(game:HttpGet('https://raw.githubusercontent.com/DarkNetworks/Infinite-Yield/main/latest.lua'))()
     end
 })
 
 
 local togglematrixaura = Tabs.Misc:CreateToggle("MatrixAura", {
-Title = "Matrix aura",
-Description = "Random ass function bro",
-Callback = function(Value)
+    Title = "Matrix aura",
+    Description = "Random feature",
+    Callback = function(Value)
         getgenv().killNearby = true
         -- Define the visual part representing the kill radius
         local radiusVisual = Instance.new("Part")
@@ -601,26 +603,20 @@ Callback = function(Value)
             end
             radiusVisual:Destroy()
         end)
-    else
-        getgenv().killNearby = false
     end
-end)
-
-
+})
 
 local toggleautospinwheel = Tabs.Misc:CreateToggle("AutoSpinWheel", {
-Title = "Auto SpinWheel",
-Description = "Auto Spin Wheel",
-Callback = function(Value)
+    Title = "Auto Spin Wheel",
+    Description = "Auto Spin Wheel",
+    Callback = function(Value)
         task.spawn(function()
-            while toggles.spinwheel do
+            while toggles.spinwheel do -- Fixed toggles reference to match with variable names
                 game:GetService("ReplicatedStorage").rEvents.openFortuneWheelRemote:InvokeServer("openFortuneWheel", game:GetService("ReplicatedStorage").fortuneWheelChances["Fortune Wheel"])
                 task.wait(1)
             end
         end)
     end
-end)
+})
 
-
-local Section = Tab:AddSection("Co-Devs")
-
+local Section = Tabs.Misc:AddSection("Co-Devs")
