@@ -24,6 +24,8 @@ local Tabs = {
     AutoKill = Window:AddTab({ Title = "Auto Kill", Icon = "0" }),
     AutoRock = Window:AddTab({ Title = "Auto Rock", Icon = "0" }),
     FastGlitch = Window:AddTab({ Title = "Fast Glitch", Icon = "0" })
+    OP TOOLS = Window:AddTab({ Title = "OP FUNCTIONS🔥", Icon = "0" })
+    Misc = Window:AddTab({ Title = "Misc", Icon = "0" })
 }
 
 ---------------------
@@ -214,6 +216,25 @@ Tabs.AutoRebirth:CreateToggle("AutoRebirth", {
     end
 })
 
+local togglerebirthinf = Tabs.AutoRebirth:CreateToggle("AutoRebirthInf", {
+Title = "Auto Rebirth Infinitly",
+Description = "Auto Rebirth Non stop",
+Callback = function(Value)
+if Value then
+			infiniteRebirthLoop = task.spawn(function()
+				while task.wait(0.1) do
+					game:GetService("ReplicatedStorage").rEvents.rebirthRemote:InvokeServer("rebirthRequest")
+				end
+			end)
+		else
+			if infiniteRebirthLoop then
+				task.cancel(infiniteRebirthLoop)
+				infiniteRebirthLoop = nil
+			end
+		end
+	end
+})
+
 ------------------------
 -- Auto Kill Tab
 ------------------------
@@ -313,6 +334,57 @@ Tabs.AutoKill:CreateToggle("Auto Punch", {
     end
 })
 
+Tabs.AutoKill:CreateToggle("Fast Punch", {
+Title = "FAST PUNCH",
+Description = "Speedy nigga🔥🍗",
+Callback = function(Value)
+    local function equipAndModifyPunch()
+            while _G.fastHitActive do
+                local player = game.Players.LocalPlayer
+                local punch = player.Backpack:FindFirstChild("Punch")
+                if punch then
+                    punch.Parent = player.Character  -- Equip punch tool
+                    if punch:FindFirstChild("attackTime") then
+                        punch.attackTime.Value = 0  -- Set attack time to zero
+                    end
+                end
+                task.wait(0)  -- Small wait to avoid freezing the script
+            end
+        end
+
+        local function rapidPunch()
+            while _G.fastHitActive do
+                local player = game.Players.LocalPlayer
+                player.muscleEvent:FireServer("punch", "rightHand")
+                player.muscleEvent:FireServer("punch", "leftHand")
+
+                local character = player.Character
+                if character then
+                    local punchTool = character:FindFirstChild("Punch")
+                    if punchTool then
+                        punchTool:Activate()  -- Activate the punch tool
+                    end
+                end
+                task.wait(0)  -- Small wait to avoid too many requests
+            end
+        end
+
+        coroutine.wrap(equipAndModifyPunch)()  -- Start equip and modify coroutine
+        coroutine.wrap(rapidPunch)()  -- Start rapid punch coroutine
+    else
+        -- If autopunch is false, return the punch tool to the backpack
+        local character = game.Players.LocalPlayer.Character
+        if character then
+            local equipped = character:FindFirstChild("Punch")
+            if equipped then
+                equipped.Parent = game.Players.LocalPlayer.Backpack  -- Unequip punch tool
+            end
+        end
+        print("Auto Punch Off")
+    end
+end)
+)}
+
 -------------------------
 -- Auto Rock Tab
 -------------------------
@@ -394,3 +466,161 @@ createFastGlitch(Tabs.FastGlitch, "Fast Glitch Eternal Rock", "Eternal Gym Rock"
 createFastGlitch(Tabs.FastGlitch, "Fast Glitch Legends Rock", "Legends gym Rock", 1000000)
 createFastGlitch(Tabs.FastGlitch, "Fast Glitch Muscle King", "Muscle King Rock", 5000000)
 createFastGlitch(Tabs.FastGlitch, "Fast Glitch Jungle Rock", "Jungle Rock", 10000000)
+
+
+local togglesfastrebirth = Tabs.OP TOOLS:CreateToggle("FastRebirth", {
+Title = "Fast Rebirth🚀",
+Description = "FAST REBIRTH",
+Callback = function(Value)
+loadstring(game:HttpGet("https://raw.githubusercontent.com/0o0o0o0o0o0o0o0o0o0o0o0o/0o0o0o0o/refs/heads/main/Kk"))()
+end
+})
+
+local togglefastgrind = Tabs.OP TOOLS:CreateToggle("FastGrind", {
+Title = "FAST GRIND🔥",
+Description = "RAPID NIGGA🍗",
+Callback = function(Value)
+local isGrinding = Value
+
+    if not Value then
+        return
+    end
+
+    for i = 1, 12 do
+        task.spawn(function()
+            while isGrinding do
+                game:GetService("Players").LocalPlayer.muscleEvent:FireServer("rep")
+                task.wait(0.083)
+            end
+        end)
+    end
+end)
+
+
+
+Tabs.Misc:AddButton({
+    Title = "Anti AFK",
+    Description = "You dont get kicked for being idle",
+    Callback = function()
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/evxncodes/mainroblox/main/anti-afk", true))()
+    end
+})
+
+local toggleautobrawlgrind = Tabs.Misc:CreateToggle("AutobrawlGrind", {
+Title = "Auto Brawl GRIND:,
+Description = "Auto brawl for leaderboard",
+Callback = function(Value)
+        task.spawn(function()
+            while toggles.autoJoinToggleBrawl do
+                game:GetService("ReplicatedStorage").rEvents.brawlEvent:FireServer("joinBrawl")
+                task.wait(2)
+            end
+        end)
+    end
+end)
+
+local toggleautobrawlgod = Tabs.Misc:CreateToggle("AutoBrawlGod", {
+Title = "Auto Brawl GOD",
+Description = "Be invincible",
+Callback = function(Value)
+        task.spawn(function()
+            while toggles.autoJoinToggleBrawlGOD do
+                game:GetService("ReplicatedStorage").rEvents.brawlEvent:FireServer("joinBrawl")
+                task.wait(0.5)
+            end
+        end)
+    end
+end)
+
+Tabs.Misc:AddButton({
+    Title = "Infinite Yield",
+    Description = "Loads Infinite Yield",
+    Callback = function()
+           loadstring(game:HttpGet('https://raw.githubusercontent.com/DarkNetworks/Infinite-Yield/main/latest.lua'))() 
+    end
+})
+
+
+local togglematrixaura = Tabs.Misc:CreateToggle("MatrixAura", {
+Title = "Matrix aura",
+Description = "Random ass function bro",
+Callback = function(Value)
+        getgenv().killNearby = true
+        -- Define the visual part representing the kill radius
+        local radiusVisual = Instance.new("Part")
+        radiusVisual.Anchored = true
+        radiusVisual.CanCollide = false
+        radiusVisual.Transparency = 0.8
+        radiusVisual.Material = Enum.Material.ForceField
+        radiusVisual.Color = Color3.fromRGB(225, 0, 0)
+        radiusVisual.Size = Vector3.new(1, 0.1, 1)
+        radiusVisual.Parent = workspace
+
+        task.spawn(function()
+            while getgenv().killNearby do
+                pcall(function()
+                    local myCharacter = game.Players.LocalPlayer.Character
+                    local myRoot = myCharacter and myCharacter:FindFirstChild("HumanoidRootPart")
+                    if myRoot then
+                        local currentRadius = 10
+                        radiusVisual.Size = Vector3.new(currentRadius * 10, 0.40, currentRadius * 10)
+                        radiusVisual.CFrame = myRoot.CFrame * CFrame.new(0, -2, 0)
+
+                        for _, player in pairs(game:GetService("Players"):GetPlayers()) do
+                            if player ~= game.Players.LocalPlayer then
+                                local char = player.Character
+                                local root = char and char:FindFirstChild("HumanoidRootPart")
+                                if root and (root.Position - myRoot.Position).Magnitude <= currentRadius then
+                                    local killEffect = Instance.new("Part")
+                                    killEffect.Anchored = true
+                                    killEffect.CanCollide = false
+                                    killEffect.Transparency = 0.5
+                                    killEffect.Material = Enum.Material.Neon
+                                    killEffect.Color = Color3.fromRGB(0, 0, 0)
+                                    killEffect.CFrame = root.CFrame
+                                    killEffect.Size = Vector3.new(5, 5, 5)
+                                    killEffect.Parent = workspace
+
+                                    -- Tweening effect for kill effect
+                                    game:GetService("TweenService"):Create(killEffect, TweenInfo.new(0.5), {
+                                        Size = Vector3.new(0, 0, 0),
+                                        Transparency = 1
+                                    }):Play()
+
+                                    game:GetService("Debris"):AddItem(killEffect, 0.5)
+                                    firetouchinterest(root, myCharacter.LeftHand, 0)
+                                    task.wait()
+                                    firetouchinterest(root, myCharacter.LeftHand, 1)
+                                end
+                            end
+                        end
+                        task.wait(0.1)
+                    end
+                end)
+                task.wait(0.1)
+            end
+            radiusVisual:Destroy()
+        end)
+    else
+        getgenv().killNearby = false
+    end
+end)
+
+
+
+local toggleautospinwheel = Tabs.Misc:CreateToggle("AutoSpinWheel", {
+Title = "Auto SpinWheel",
+Description = "Auto Spin Wheel",
+Callback = function(Value)
+        task.spawn(function()
+            while toggles.spinwheel do
+                game:GetService("ReplicatedStorage").rEvents.openFortuneWheelRemote:InvokeServer("openFortuneWheel", game:GetService("ReplicatedStorage").fortuneWheelChances["Fortune Wheel"])
+                task.wait(1)
+            end
+        end)
+    end
+end)
+
+
+local Section = Tab:AddSection("Co-Devs")
+
