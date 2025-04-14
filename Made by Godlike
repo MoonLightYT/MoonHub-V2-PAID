@@ -25,8 +25,8 @@ local Tabs = {
 
 -- Main Tab
 local MainSection = Tabs.Main:CreateSection("Basic Controls")
-local selectedSize = "2"
-local selectedSpeed = "125"
+local selectedSize = 2  -- Start as a number for easier manipulation
+local selectedSpeed = 125 -- Start as a number for easier manipulation
 
 local InputSize = MainSection:AddInput("SizeChanger", {
     Title = "Size Changer",
@@ -36,9 +36,9 @@ local InputSize = MainSection:AddInput("SizeChanger", {
     Numeric = true,
     Finished = true,
     Callback = function(Value)
-        selectedSize = Value
+        selectedSize = tonumber(Value) or 2
         if _G.AutoSize then
-            game:GetService("ReplicatedStorage").rEvents.changeSpeedSizeRemote:InvokeServer("changeSize", tonumber(selectedSize))
+            game:GetService("ReplicatedStorage").rEvents.changeSpeedSizeRemote:InvokeServer("changeSize", selectedSize)
         end
     end
 })
@@ -50,7 +50,7 @@ local ToggleAutoSize = Tabs.Main:CreateToggle("AutoSize", {
     Callback = function(Value)
         _G.AutoSize = Value
         while _G.AutoSize do
-            game:GetService("ReplicatedStorage").rEvents.changeSpeedSizeRemote:InvokeServer("changeSize", tonumber(selectedSize))
+            game:GetService("ReplicatedStorage").rEvents.changeSpeedSizeRemote:InvokeServer("changeSize", selectedSize)
             task.wait(0.1)
         end
     end
@@ -64,11 +64,11 @@ local InputSpeed = Tabs.Main:CreateInput("SpeedChanger", {
     Numeric = true,
     Finished = true,
     Callback = function(Value)
-        selectedSpeed = Value
+        selectedSpeed = tonumber(Value) or 125
         if _G.AutoSpeed and game.Players.LocalPlayer.Character then
             local humanoid = game.Players.LocalPlayer.Character:FindFirstChild("Humanoid")
             if humanoid then
-                humanoid.WalkSpeed = tonumber(selectedSpeed)
+                humanoid.WalkSpeed = selectedSpeed
             end
         end
     end
@@ -84,10 +84,10 @@ local ToggleAutoSpeed = Tabs.Main:CreateToggle("AutoSpeed", {
             if game.Players.LocalPlayer.Character then
                 local humanoid = game.Players.LocalPlayer.Character:FindFirstChild("Humanoid")
                 if humanoid then
-                    humanoid.WalkSpeed = tonumber(selectedSpeed)
+                    humanoid.WalkSpeed = selectedSpeed
                 end
             end
-            task.wait()
+            task.wait(0.1)
         end
     end
 })
@@ -98,7 +98,7 @@ Tabs.Main:AddButton({
     Description = "Makes the Auto Lift Pass free",
     Callback = function()
         local gamepassFolder = game:GetService("ReplicatedStorage").gamepassIds
-        local player = game:GetService("Players").LocalPlayer
+        local player = game.Players.LocalPlayer
         for _, gamepass in pairs(gamepassFolder:GetChildren()) do
             local value = Instance.new("IntValue")
             value.Name = gamepass.Name
@@ -123,6 +123,7 @@ Tabs.Main:AddButton({
 local ToggleAutoWeight = Tabs.AutoWeights:CreateToggle("Auto Weights", {
     Title = "Auto Weight",
     Description = "This auto lifts the Dumbbell",
+    Default = false,
     Callback = function(Value)
         _G.AutoWeight = Value
         if Value then
@@ -144,9 +145,8 @@ local ToggleAutoWeight = Tabs.AutoWeights:CreateToggle("Auto Weights", {
     end
 })
 
--- Additional toggles for Auto Weights Tab can go here...
-
 -- Auto Rebirth Tab
+local targetRebirthValue = 1
 local targetInput = Tabs.AutoRebirth:CreateInput("TargetRebirth", {
     Title = "Rebirth Amount",
     Description = "Enter your target rebirth goal",
@@ -159,27 +159,22 @@ local targetInput = Tabs.AutoRebirth:CreateInput("TargetRebirth", {
     end
 })
 
-local targetRebirthLoop = nil
 local targetToggle = Tabs.AutoRebirth:CreateToggle("AutoRebirthTarget", {
     Title = "Auto Rebirth (Target point)",
     Description = "Automatically rebirth until target is reached",
     Default = false,
     Callback = function(Value)
         if Value then
-            targetRebirthLoop = task.spawn(function()
-                while task.wait(0.1) do
+            task.spawn(function()
+                while true do
                     if game.Players.LocalPlayer.leaderstats.Rebirths.Value >= targetRebirthValue then
                         targetToggle:SetValue(false)
                         break
                     end
                     game:GetService("ReplicatedStorage").rEvents.rebirthRemote:InvokeServer("rebirthRequest")
+                    task.wait(0.1)
                 end
             end)
-        else
-            if targetRebirthLoop then
-                task.cancel(targetRebirthLoop)
-                targetRebirthLoop = nil
-            end
         end
     end
 })
@@ -189,12 +184,13 @@ local Section = Tabs.AutoKill:CreateSection("Auto Kill")
 local Players = game:GetService("Players")
 
 local function checkCharacter()
-    if not game.Players.LocalPlayer.Character then
+    local player = Players.LocalPlayer
+    if not player.Character then
         repeat
             task.wait()
-        until game.Players.LocalPlayer.Character
+        until player.Character
     end
-    return game.Players.LocalPlayer.Character
+    return player.Character
 end
 
 local function killPlayer(target)
@@ -214,8 +210,8 @@ Tabs.AutoKill:AddToggle("Kill Player", {
         getgenv().killallv2 = v
         task.spawn(function()
             while getgenv().killallv2 do
-                for _, player in ipairs(game.Players:GetPlayers()) do
-                    if player ~= game.Players.LocalPlayer and player.Character and player.Character:FindFirstChild("Humanoid") and player.Character.Humanoid.Health > 0 then
+                for _, player in ipairs(Players:GetPlayers()) do
+                    if player ~= Players.LocalPlayer and player.Character and player.Character:FindFirstChild("Humanoid") and player.Character.Humanoid.Health > 0 then
                         killPlayer(player)
                     end
                 end
@@ -239,8 +235,8 @@ local PlayerDropdown = Tabs.AutoKill:CreateDropdown("PlayerList", {
 
 local function updatePlayerList()
     local playerInfo = {}
-    for _, player in pairs(game.Players:GetPlayers()) do
-        if player ~= game.Players.LocalPlayer then
+    for _, player in pairs(Players:GetPlayers()) do
+        if player ~= Players.LocalPlayer then
             local displayText = player.Name .. " | " .. player.DisplayName
             table.insert(playerInfo, displayText)
         end
@@ -255,6 +251,6 @@ task.spawn(function()
     end
 end)
 
-game.Players.PlayerAdded:Connect(updatePlayerList)
-game.Players.PlayerRemoving:Connect(updatePlayerList)
+Players.PlayerAdded:Connect(updatePlayerList)
+Players.PlayerRemoving:Connect(updatePlayerList)
 updatePlayerList()
