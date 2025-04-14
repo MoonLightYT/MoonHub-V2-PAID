@@ -22,7 +22,7 @@ local Tabs = {
     AutoWeights = Window:AddTab({ Title = "Auto Weights", Icon = "0" }),
     AutoRebirth = Window:AddTab({ Title = "Auto Rebirth", Icon = "0" }),
     AutoKill = Window:AddTab({ Title = "Auto Kill", Icon = "0" }),
-    AutoRock = Window:AddTab({ Title = "Auto Rock", Icon = "0" })
+    AutoRock = Window:AddTab({ Title = "Auto Rock", Icon = "0" }),
     FastGlitch = Window:AddTab({ Title = "Fast Glitch", Icon = "0" })
 }
 
@@ -256,7 +256,7 @@ local PlayerDropdown = Tabs.AutoKill:CreateDropdown("PlayerList", {
     Title = "Kill Target",
     Values = {},
     Callback = function(val)
-        getgenv().targetPlayer = val:match("(.+)%s|")
+        getgenv().targetPlayer = val:match("(.+)%s|") or ""
     end
 })
 
@@ -348,11 +348,9 @@ createRockToggle(Tabs.AutoRock, "Auto Tiny Rock", 0)
 createRockToggle(Tabs.AutoRock, "Auto Frost Rock", 150000)
 createRockToggle(Tabs.AutoRock, "Auto Mystic Rock", 400000)
 createRockToggle(Tabs.AutoRock, "Auto Eternal Rock", 750000)
-createRockToggles(Tabs.AutoRock, "Auto Legends rock", 1000000)
-createRockToggles(Tabs.AutoRock, "Auto Muscle King rock", 5000000)
-createRockToggles(Tabs.AutoRock, "Auto Jungle rock", 10000000)
-
-
+createRockToggle(Tabs.AutoRock, "Auto Legends Rock", 1000000)
+createRockToggle(Tabs.AutoRock, "Auto Muscle King Rock", 5000000)
+createRockToggle(Tabs.AutoRock, "Auto Jungle Rock", 10000000)
 
 -- Helper: Glitch Rock Toggler
 local function createFastGlitch(tab, title, rockName, requiredDurability)
@@ -378,7 +376,6 @@ local function createFastGlitch(tab, title, rockName, requiredDurability)
                                         firetouchinterest(rock, hand, 0)
                                         firetouchinterest(rock, hand, 1)
                                     end
-                                    gettool()
                                 end
                             end
                         end
@@ -394,20 +391,3 @@ createFastGlitch(Tabs.FastGlitch, "Fast Glitch Tiny Rock", "Tiny Island Rock", 0
 createFastGlitch(Tabs.FastGlitch, "Fast Glitch Frost Rock", "Frost Gym Rock", 150000)
 createFastGlitch(Tabs.FastGlitch, "Fast Glitch Mystic Rock", "Mythical Gym Rock", 400000)
 createFastGlitch(Tabs.FastGlitch, "Fast Glitch Eternal Rock", "Eternal Gym Rock", 750000)
-
--- Fix Rock Toggle Creation
-createRockToggle(Tabs.AutoRock, "Auto Tiny Rock", 0)
-createRockToggle(Tabs.AutoRock, "Auto Frost Rock", 150000)
-createRockToggle(Tabs.AutoRock, "Auto Mystic Rock", 400000)
-createRockToggle(Tabs.AutoRock, "Auto Eternal Rock", 750000)
-createRockToggle(Tabs.AutoRock, "Auto Legends Rock", 1000000)
-createRockToggle(Tabs.AutoRock, "Auto Muscle King Rock", 5000000)
-createRockToggle(Tabs.AutoRock, "Auto Jungle Rock", 10000000)
-
-
-
-
-
-
-
-
