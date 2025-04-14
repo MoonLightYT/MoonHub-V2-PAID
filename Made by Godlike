@@ -2,7 +2,12 @@
 local whitelistedUsers = {
     "XxmanticoreYT",  -- Authorized user
     "FREE36262626262",
-    "RYU_5K8",-- You can add more usernames here
+    "RYU_5K8",
+    "Shadow_RipperZ0",
+    "El_MasterMKL2T",
+    "NATH100075",
+    "X_blackan",
+    "-- You can add more usernames here
 }
 
 -- Function to check if player is whitelisted
