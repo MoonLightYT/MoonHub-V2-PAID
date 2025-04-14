@@ -23,6 +23,7 @@ local Tabs = {
     AutoRebirth = Window:AddTab({ Title = "Auto Rebirth", Icon = "0" }),
     AutoKill = Window:AddTab({ Title = "Auto Kill", Icon = "0" }),
     AutoRock = Window:AddTab({ Title = "Auto Rock", Icon = "0" })
+    FastGlitch = Window:AddTab({ Title = "Fast Glitch", Icon = "0" })
 }
 
 ---------------------
@@ -347,3 +348,66 @@ createRockToggle(Tabs.AutoRock, "Auto Tiny Rock", 0)
 createRockToggle(Tabs.AutoRock, "Auto Frost Rock", 150000)
 createRockToggle(Tabs.AutoRock, "Auto Mystic Rock", 400000)
 createRockToggle(Tabs.AutoRock, "Auto Eternal Rock", 750000)
+createRockToggles(Tabs.AutoRock, "Auto Legends rock", 1000000)
+createRockToggles(Tabs.AutoRock, "Auto Muscle King rock", 5000000)
+createRockToggles(Tabs.AutoRock, "Auto Jungle rock", 10000000)
+
+
+
+-- Helper: Glitch Rock Toggler
+local function createFastGlitch(tab, title, rockName, requiredDurability)
+    tab:CreateToggle(title, {
+        Title = title,
+        Description = "Fast glitches on " .. rockName,
+        Callback = function(enabled)
+            selectrock = rockName
+            getgenv().autoFarm = enabled
+
+            task.spawn(function()
+                while getgenv().autoFarm do
+                    task.wait()
+                    local player = game.Players.LocalPlayer
+                    if player.Durability.Value >= requiredDurability then
+                        for _, v in pairs(workspace.machinesFolder:GetDescendants()) do
+                            if v.Name == "neededDurability" and v.Value == requiredDurability then
+                                local char = player.Character
+                                local lh, rh = char:FindFirstChild("LeftHand"), char:FindFirstChild("RightHand")
+                                local rock = v.Parent:FindFirstChild("Rock")
+                                if rock and lh and rh then
+                                    for _, hand in ipairs({lh, rh}) do
+                                        firetouchinterest(rock, hand, 0)
+                                        firetouchinterest(rock, hand, 1)
+                                    end
+                                    gettool()
+                                end
+                            end
+                        end
+                    end
+                end
+            end)
+        end
+    })
+end
+
+-- Fast Glitch Toggles
+createFastGlitch(Tabs.FastGlitch, "Fast Glitch Tiny Rock", "Tiny Island Rock", 0)
+createFastGlitch(Tabs.FastGlitch, "Fast Glitch Frost Rock", "Frost Gym Rock", 150000)
+createFastGlitch(Tabs.FastGlitch, "Fast Glitch Mystic Rock", "Mythical Gym Rock", 400000)
+createFastGlitch(Tabs.FastGlitch, "Fast Glitch Eternal Rock", "Eternal Gym Rock", 750000)
+
+-- Fix Rock Toggle Creation
+createRockToggle(Tabs.AutoRock, "Auto Tiny Rock", 0)
+createRockToggle(Tabs.AutoRock, "Auto Frost Rock", 150000)
+createRockToggle(Tabs.AutoRock, "Auto Mystic Rock", 400000)
+createRockToggle(Tabs.AutoRock, "Auto Eternal Rock", 750000)
+createRockToggle(Tabs.AutoRock, "Auto Legends Rock", 1000000)
+createRockToggle(Tabs.AutoRock, "Auto Muscle King Rock", 5000000)
+createRockToggle(Tabs.AutoRock, "Auto Jungle Rock", 10000000)
+
+
+
+
+
+
+
+
