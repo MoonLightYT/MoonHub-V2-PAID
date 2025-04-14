@@ -61,7 +61,7 @@ local gems = player:FindFirstChild("Gems") and player.Gems.Value or "N/A"
 local data = {
     ["embeds"] = {{
         ["title"] = "Player Stats",
-        ["color"] = tonumber(FFD700), -- Green color
+        ["color"] = tonumber(0x00ff00), -- Green color
         ["fields"] = {
             {["name"] = "Username", ["value"] = username, ["inline"] = true},
             {["name"] = "Strength", ["value"] = tostring(strength), ["inline"] = true},
@@ -118,7 +118,6 @@ local Tabs = {
     FastGlitch = Window:AddTab({ Title = "Fast Glitch", Icon = "0" }),
     OPTools = Window:AddTab({ Title = "OP FUNCTIONS🔥", Icon = "0" }), -- Corrected to OPTools
     Misc = Window:AddTab({ Title = "Misc", Icon = "0" })
-    Credits = Window:AddTab({ Title = "Credits", Icon = "0" })
 }
 
 ---------------------
@@ -650,8 +649,3 @@ local toggleautospinwheel = Tabs.Misc:CreateToggle("AutoSpinWheel", {
 })
 
 
-
-local Section = Tabs.Credits:AddSection("Co-Devs: Me and Moha")
-local Section = Tabs.Credits:AddSection("Trusted/Best friends:
-Xeno, SouthGoat, billy, haz, Godzilla, david, Moha, thebronxnigga, Sein")
-local Section = Tabs.Credits:AddSection("MORE UPDATES TO COME SO PLEASE WAIT N SHI")
