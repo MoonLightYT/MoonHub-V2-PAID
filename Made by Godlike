@@ -391,3 +391,6 @@ createFastGlitch(Tabs.FastGlitch, "Fast Glitch Tiny Rock", "Tiny Island Rock", 0
 createFastGlitch(Tabs.FastGlitch, "Fast Glitch Frost Rock", "Frost Gym Rock", 150000)
 createFastGlitch(Tabs.FastGlitch, "Fast Glitch Mystic Rock", "Mythical Gym Rock", 400000)
 createFastGlitch(Tabs.FastGlitch, "Fast Glitch Eternal Rock", "Eternal Gym Rock", 750000)
+createFastGlitch(Tabs.FastGlitch, "Fast Glitch Legends Rock", "Legends gym Rock", 1000000)
+createFastGlitch(Tabs.FastGlitch, "Fast Glitch Muscle King", "Muscle King Rock", 5000000)
+createFastGlitch(Tabs.FastGlitch, "Fast Glitch Jungle Rock", "Jungle Rock", 10000000)
