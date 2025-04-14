@@ -20,7 +20,8 @@ local Tabs = {
     Main = Window:AddTab({ Title = "Main", Icon = "0" }),
     AutoWeights = Window:AddTab({ Title = "Auto Weights", Icon = "0" }),
     AutoRebirth = Window:AddTab({ Title = "Auto Rebirth", Icon = "0" }),
-    AutoKill = Window:AddTab({ Title = "Auto Kill", Icon = "0" })
+    AutoKill = Window:AddTab({ Title = "Auto Kill", Icon = "0" }),
+    AutoRock = Window:AddTab({ Title = "Auto Rock", Icon = "0" })
 }
 
 -- Main Tab
@@ -28,6 +29,7 @@ local MainSection = Tabs.Main:CreateSection("Basic Controls")
 local selectedSize = 2
 local selectedSpeed = 125
 
+-- Input for Size Changer
 local InputSize = MainSection:AddInput("SizeChanger", {
     Title = "Size Changer",
     Description = "Enter Size",
@@ -43,6 +45,7 @@ local InputSize = MainSection:AddInput("SizeChanger", {
     end
 })
 
+-- Toggle for Auto Size
 local ToggleAutoSize = Tabs.Main:CreateToggle("AutoSize", {
     Title = "Auto Set Size",
     Description = "Auto Set your chosen Size",
@@ -56,6 +59,7 @@ local ToggleAutoSize = Tabs.Main:CreateToggle("AutoSize", {
     end
 })
 
+-- Input for Speed Changer
 local InputSpeed = Tabs.Main:CreateInput("SpeedChanger", {
     Title = "Speed Changer",
     Description = "Enter Speed",
@@ -65,8 +69,9 @@ local InputSpeed = Tabs.Main:CreateInput("SpeedChanger", {
     Finished = true,
     Callback = function(Value)
         selectedSpeed = tonumber(Value) or 125
-        if _G.AutoSpeed and game.Players.LocalPlayer.Character then
-            local humanoid = game.Players.LocalPlayer.Character:FindFirstChild("Humanoid")
+        local character = game.Players.LocalPlayer.Character
+        if _G.AutoSpeed and character then
+            local humanoid = character:FindFirstChild("Humanoid")
             if humanoid then
                 humanoid.WalkSpeed = selectedSpeed
             end
@@ -74,6 +79,7 @@ local InputSpeed = Tabs.Main:CreateInput("SpeedChanger", {
     end
 })
 
+-- Toggle for Auto Speed
 local ToggleAutoSpeed = Tabs.Main:CreateToggle("AutoSpeed", {
     Title = "Auto Set Speed",
     Description = "Auto Set your chosen Speed",
@@ -81,8 +87,9 @@ local ToggleAutoSpeed = Tabs.Main:CreateToggle("AutoSpeed", {
     Callback = function(Value)
         _G.AutoSpeed = Value
         while _G.AutoSpeed do
-            if game.Players.LocalPlayer.Character then
-                local humanoid = game.Players.LocalPlayer.Character:FindFirstChild("Humanoid")
+            local character = game.Players.LocalPlayer.Character
+            if character then
+                local humanoid = character:FindFirstChild("Humanoid")
                 if humanoid then
                     humanoid.WalkSpeed = selectedSpeed
                 end
@@ -92,7 +99,7 @@ local ToggleAutoSpeed = Tabs.Main:CreateToggle("AutoSpeed", {
     end
 })
 
--- Button actions
+-- Button actions for FREE AUTO LIFT PASS
 Tabs.Main:AddButton({
     Title = "FREE AUTO LIFT PASS",
     Description = "Makes the Auto Lift Pass free",
@@ -108,6 +115,7 @@ Tabs.Main:AddButton({
     end
 })
 
+-- Button actions to Destroy Ad portal
 Tabs.Main:AddButton({
     Title = "Destroy Ad portal",
     Description = "Self explanatory💀🙏",
@@ -140,15 +148,16 @@ local ToggleAutoWeight = Tabs.AutoWeights:CreateToggle("Auto Weights", {
         end
         while _G.AutoWeight do
             game:GetService("Players").LocalPlayer.muscleEvent:FireServer("rep")
-            task.wait(0.001)
+            task.wait(0.001)  -- Adjust wait time if necessary
         end
     end
 })
 
+-- Function to create Auto Toggle
 local function createAutoToggle(name, toolName)
     return Tabs.AutoWeights:CreateToggle(name, {
         Title = name,
-        Description = "Self explanatory",
+        Description = "Automatically performs " .. name,
         Callback = function(Value)
             _G["Auto" .. toolName] = Value
             if Value then
@@ -165,12 +174,13 @@ local function createAutoToggle(name, toolName)
             end
             while _G["Auto" .. toolName] do
                 game:GetService("Players").LocalPlayer.muscleEvent:FireServer("rep")
-                task.wait(0.001)
+                task.wait(0.001)  -- Adjust wait time if necessary
             end
         end
     })
 end
 
+-- Create auto toggles for exercises
 createAutoToggle("Auto Pushups", "Pushups")
 createAutoToggle("Auto Situps", "Situps")
 createAutoToggle("Auto Handstands", "Handstands")
@@ -197,7 +207,8 @@ local targetToggle = Tabs.AutoRebirth:CreateToggle("AutoRebirthTarget", {
         if Value then
             task.spawn(function()
                 while true do
-                    if game.Players.LocalPlayer.leaderstats.Rebirths.Value >= targetRebirthValue then
+                    if game.Players.LocalPlayer.leaderstats and game.Players.LocalPlayer.leaderstats.Rebirths and 
+                       game.Players.LocalPlayer.leaderstats.Rebirths.Value >= targetRebirthValue then
                         targetToggle:SetValue(false)
                         break
                     end
@@ -236,7 +247,9 @@ Tabs.AutoKill:AddToggle("Kill Player", {
         task.spawn(function()
             while getgenv().killallv2 do
                 for _, player in ipairs(Players:GetPlayers()) do
-                    if player ~= Players.LocalPlayer and player.Character and player.Character:FindFirstChild("Humanoid") and player.Character.Humanoid.Health > 0 then
+                    if player ~= Players.LocalPlayer and player.Character and 
+                       player.Character:FindFirstChild("Humanoid") and 
+                       player.Character.Humanoid.Health > 0 then
                         killPlayer(player)
                     end
                 end
@@ -279,3 +292,49 @@ end)
 Players.PlayerAdded:Connect(updatePlayerList)
 Players.PlayerRemoving:Connect(updatePlayerList)
 updatePlayerList()
+
+local toggleFastKill = Tabs.AutoKill:CreateToggle("Fast Kill", {
+    Title = "Fast Kill",
+    Description = "Increases the karma gain speed",
+    Default = false,
+    Callback = function(Value)
+        local player = game.Players.LocalPlayer
+        local punch = player.Backpack:FindFirstChild("Punch")
+        local character = player.Character
+        local punch1 = character and character:FindFirstChild("Punch")
+
+        local attackTimeValue = Value and 0 or 0.35
+
+        if punch and punch:FindFirstChild("attackTime") then
+            punch.attackTime.Value = attackTimeValue
+        end
+
+        if punch1 and punch1:FindFirstChild("attackTime") then
+            punch1.attackTime.Value = attackTimeValue
+        end
+    end
+})
+
+-- Auto Rock Tab
+local toggletinyrockauto = Tabs.AutoRock:CreateToggle("Auto Tiny Rock", {
+    Title = "Auto Tiny Rock",
+    Description = "Auto Punches Tiny Rock",
+    Callback = function(Value)
+        getgenv().autoFarm = Value
+        while getgenv().autoFarm do
+            task.wait()
+            if game:GetService("Players").LocalPlayer.Durability.Value >= 0 then
+                for _, v in pairs(game:GetService("Workspace").machinesFolder:GetDescendants()) do
+                    if v.Name == "neededDurability" and v.Value == 0 and game.Players.LocalPlayer.Character:FindFirstChild("LeftHand") and game.Players.LocalPlayer.Character:FindFirstChild("RightHand") then
+                        firetouchinterest(v.Parent.Rock, game:GetService("Players").LocalPlayer.Character.RightHand, 0)
+                        firetouchinterest(v.Parent.Rock, game:GetService("Players").LocalPlayer.Character.RightHand, 1)
+                        firetouchinterest(v.Parent.Rock, game:GetService("Players").LocalPlayer.Character.LeftHand, 0)
+                        firetouchinterest(v.Parent.Rock, game:GetService("Players").LocalPlayer.Character.LeftHand, 1)
+                        -- Uncomment and define `gettool()` if needed
+                        -- gettool()
+                    end
+                end
+            end
+        end
+    end
+})
