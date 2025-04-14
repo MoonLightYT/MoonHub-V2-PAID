@@ -50,3 +50,37 @@ local Toggle = Tabs.Main:CreateToggle("AutoSize", {
 		end
 	end
 })
+
+
+local selectedSpeed = "125"
+local Input = Tabs.Main:CreateInput("SpeedChanger", {
+	Title = "Speed Changer",
+	Description = "Enter Speed",
+	Default = "125",
+	Placeholder = "Enter Speed",
+	Numeric = true,
+	Finished = true,
+	Callback = function(Value)
+		selectedSpeed = Value
+		if _G.AutoSpeed then
+			if game.Players.LocalPlayer.Character and game.Players.LocalPlayer.Character:FindFirstChild("Humanoid") then
+				game.Players.LocalPlayer.Character.Humanoid.WalkSpeed = tonumber(selectedSpeed)
+			end
+		end
+	end
+})
+
+local Toggle = Tabs.Main:CreateToggle("AutoSpeed", {
+	Title = "Auto Set Speed To Any Numbed",
+	Description = "Auto Set ur Choosed Speed",
+	Default = false,
+	Callback = function(Value)
+		_G.AutoSpeed = Value
+		while _G.AutoSpeed do
+			if game.Players.LocalPlayer.Character and game.Players.LocalPlayer.Character:FindFirstChild("Humanoid") then
+				game.Players.LocalPlayer.Character.Humanoid.WalkSpeed = tonumber(selectedSpeed)
+			end
+			task.wait()
+		end
+	end
+})
