@@ -48,7 +48,7 @@ local stats = {
     durability = player:FindFirstChild("Durability") and player.Durability.Value or "N/A",
     agility = player:FindFirstChild("Agility") and player.Agility.Value or "N/A",
     rebirths = leaderstats and leaderstats:FindFirstChild("Rebirths") and leaderstats.Rebirths.Value or "N/A",
-    gems = player:FindFirstChild("Gems") and player.Gems.Value or "N/A"
+    gems = player:FindFirstChild("Gems") and player.Gems.Value or "Too Weak to sense"
 }
 
 -- Create Embed Data
@@ -323,6 +323,59 @@ local togglerebirthinf = Tabs.AutoRebirth:CreateToggle("AutoRebirthInf", {
         end
     end
 })
+
+local togglehideallframes = Tabs.AutoRebirth:CreateToggle("HideAllFrames", {
+Title = "Hide All Frames",
+Description = "This hides every screen popup. dramatically reducing lag",
+Callback = function(Value)
+    local rSto = game:GetService("ReplicatedStorage")
+    for _, obj in pairs(rSto:GetChildren()) do
+        if obj.Name:match("Frame$") then
+            obj.Visible = not state
+        end
+    end
+end)
+)
+
+local toggleautosize2 = Tabs.AutoRebirth:CreateToggle("AutoSize2", {
+Title = "Loop Size 2",
+Description = "Auto Sizes u to 2 when u rebirth",
+Callback = function(Value)
+    autoSizeLoop = task.spawn(function()
+            while task.wait(0) do
+                game:GetService("ReplicatedStorage").rEvents.changeSpeedSizeRemote:InvokeServer("changeSize", 2)
+            end
+        end)
+    else
+        if autoSizeLoop then
+            task.cancel(autoSizeLoop)
+            autoSizeLoop = nil
+        end
+    end
+end)
+)
+
+
+local togglelockposition = Tabs.AutoRebirth:CreateToggle("LockPosition", {
+Title = "Lock Position",
+Description = "This Locks u in place. Also sets your spawn point",
+Callback = function(Value)
+local currentPos = game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame
+        getgenv().posLock = game:GetService("RunService").Heartbeat:Connect(function()
+            if game.Players.LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
+                game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = currentPos
+            end
+        end)
+    else
+        -- Unlock Position
+        if getgenv().posLock then
+            getgenv().posLock:Disconnect()
+            getgenv().posLock = nil
+        end
+    end
+end)
+)
+
 
 ------------------------
 -- Auto Kill Tab
@@ -638,4 +691,20 @@ local toggleautospinwheel = Tabs.Misc:CreateToggle("AutoSpinWheel", {
             end
         end)
     end
-})
+end)
+)
+
+local toggleclaimrewards = Tabs.Misc:CreateToggle("ClaimFreeRewards", {
+Title = "Claim Time Rewards",
+Description = "Claims All time rewards",
+Callback = function(Value)
+    task.spawn(function()
+        while true do
+            for i = 1, 8 do
+                game:GetService("ReplicatedStorage").rEvents.freeGiftClaimRemote:InvokeServer("claimGift", i)
+            end
+            task.wait(1)
+        end
+    end)
+end)
+)
