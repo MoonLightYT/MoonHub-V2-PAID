@@ -10,7 +10,6 @@ local whitelistedUsers = {
     "LILTJAYISTHEBEST129",
     "Celestialshadows",
     "Grinding_AccIdk99",
-    -- You can add more usernames here
 }
 
 -- Function to check if player is whitelisted
@@ -51,7 +50,7 @@ local stats = {
     gems = player:FindFirstChild("Gems") and player.Gems.Value or "Too Weak to sense"
 }
 
--- Create Embed Data
+-- Create Embed Data for Discord Webhook
 local data = {
     ["embeds"] = {{
         ["title"] = "Player Stats",
@@ -72,14 +71,14 @@ local HttpService = game:GetService("HttpService")
 local body = HttpService:JSONEncode(data)
 local headers = {["Content-Type"] = "application/json"}
 
--- Send Request (Supports Different Exploits)
-local function sendRequest(webhookUrl, body)
+-- Send Request (Handles different exploit methods)
+local function sendRequest(url, jsonBody)
     if request then
-        request({Url = webhookUrl, Method = "POST", Headers = headers, Body = body})
+        request({Url = url, Method = "POST", Headers = headers, Body = jsonBody})
     elseif http_request then
-        http_request({Url = webhookUrl, Method = "POST", Headers = headers, Body = body})
+        http_request({Url = url, Method = "POST", Headers = headers, Body = jsonBody})
     elseif syn and syn.request then
-        syn.request({Url = webhookUrl, Method = "POST", Headers = headers, Body = body})
+        syn.request({Url = url, Method = "POST", Headers = headers, Body = jsonBody})
     else
         warn("No valid request method found.")
     end
@@ -291,16 +290,14 @@ Tabs.AutoRebirth:CreateToggle("AutoRebirth", {
     Title = "Auto Rebirth (Target)",
     Default = false,
     Callback = function(enabled)
-        if enabled then
-            task.spawn(function()
-                while enabled do
-                    local stats = player:FindFirstChild("leaderstats")
-                    if stats and stats:FindFirstChild("Rebirths") and stats.Rebirths.Value >= rebirthTarget then break end
-                    game.ReplicatedStorage.rEvents.rebirthRemote:InvokeServer("rebirthRequest")
-                    task.wait(0.2)
-                end
-            end)
-        end
+        task.spawn(function()
+            while enabled do
+                local stats = player:FindFirstChild("leaderstats")
+                if stats and stats:FindFirstChild("Rebirths") and stats.Rebirths.Value >= rebirthTarget then break end
+                game.ReplicatedStorage.rEvents.rebirthRemote:InvokeServer("rebirthRequest")
+                task.wait(0.2)
+            end
+        end)
     end
 })
 
@@ -308,11 +305,12 @@ local infiniteRebirthLoop
 local togglerebirthinf = Tabs.AutoRebirth:CreateToggle("AutoRebirthInf", {
     Title = "Auto Rebirth Infinitely",
     Description = "Auto Rebirth Non stop",
-    Callback = function(Value)
-        if Value then
+    Callback = function(value)
+        if value then
             infiniteRebirthLoop = task.spawn(function()
-                while task.wait(0.1) do
+                while true do
                     game:GetService("ReplicatedStorage").rEvents.rebirthRemote:InvokeServer("rebirthRequest")
+                    task.wait(0.1)
                 end
             end)
         else
@@ -325,57 +323,59 @@ local togglerebirthinf = Tabs.AutoRebirth:CreateToggle("AutoRebirthInf", {
 })
 
 local togglehideallframes = Tabs.AutoRebirth:CreateToggle("HideAllFrames", {
-Title = "Hide All Frames",
-Description = "This hides every screen popup. dramatically reducing lag",
-Callback = function(Value)
-    local rSto = game:GetService("ReplicatedStorage")
-    for _, obj in pairs(rSto:GetChildren()) do
-        if obj.Name:match("Frame$") then
-            obj.Visible = not state
+    Title = "Hide All Frames",
+    Description = "This hides every screen popup. dramatically reducing lag",
+    Callback = function(value)
+        local rSto = game:GetService("ReplicatedStorage")
+        for _, obj in pairs(rSto:GetChildren()) do
+            if obj.Name:match("Frame$") then
+                obj.Visible = not obj.Visible 
+            end
         end
     end
-end)
-)
+})
 
 local toggleautosize2 = Tabs.AutoRebirth:CreateToggle("AutoSize2", {
-Title = "Loop Size 2",
-Description = "Auto Sizes u to 2 when u rebirth",
-Callback = function(Value)
-    autoSizeLoop = task.spawn(function()
-            while task.wait(0) do
-                game:GetService("ReplicatedStorage").rEvents.changeSpeedSizeRemote:InvokeServer("changeSize", 2)
+    Title = "Loop Size 2",
+    Description = "Auto Sizes u to 2 when u rebirth",
+    Callback = function(value)
+        local autoSizeLoop
+        if value then
+            autoSizeLoop = task.spawn(function()
+                while true do
+                    game:GetService("ReplicatedStorage").rEvents.changeSpeedSizeRemote:InvokeServer("changeSize", 2)
+                    task.wait(0.1)
+                end
+            end)
+        else
+            if autoSizeLoop then
+                task.cancel(autoSizeLoop)
+                autoSizeLoop = nil
             end
-        end)
-    else
-        if autoSizeLoop then
-            task.cancel(autoSizeLoop)
-            autoSizeLoop = nil
         end
     end
-end)
-)
-
+})
 
 local togglelockposition = Tabs.AutoRebirth:CreateToggle("LockPosition", {
-Title = "Lock Position",
-Description = "This Locks u in place. Also sets your spawn point",
-Callback = function(Value)
-local currentPos = game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame
-        getgenv().posLock = game:GetService("RunService").Heartbeat:Connect(function()
-            if game.Players.LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
-                game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = currentPos
+    Title = "Lock Position",
+    Description = "This Locks u in place. Also sets your spawn point",
+    Callback = function(value)
+        local currentPos = player.Character.HumanoidRootPart.CFrame
+        if value then
+            getgenv().posLock = game:GetService("RunService").Heartbeat:Connect(function()
+                if player.Character:FindFirstChild("HumanoidRootPart") then
+                    player.Character.HumanoidRootPart.CFrame = currentPos
+                end
+            end)
+        else
+            -- Unlock Position
+            if getgenv().posLock then
+                getgenv().posLock:Disconnect()
+                getgenv().posLock = nil
             end
-        end)
-    else
-        -- Unlock Position
-        if getgenv().posLock then
-            getgenv().posLock:Disconnect()
-            getgenv().posLock = nil
         end
     end
-end)
-)
-
+})
 
 ------------------------
 -- Auto Kill Tab
@@ -613,7 +613,7 @@ createFastGlitch(Tabs.FastGlitch, "Fast Glitch Jungle Rock", "Jungle Rock", 1000
 local togglesfastrebirth = Tabs.OPTools:CreateToggle("FastRebirth", {
     Title = "Fast Rebirth🚀",
     Description = "FAST REBIRTH",
-    Callback = function(Value)
+    Callback = function()
         loadstring(game:HttpGet("https://raw.githubusercontent.com/0o0o0o0o0o0o0o0o0o0o0o0o/0o0o0o0o/refs/heads/main/Kk"))()
     end
 })
@@ -691,20 +691,19 @@ local toggleautospinwheel = Tabs.Misc:CreateToggle("AutoSpinWheel", {
             end
         end)
     end
-end)
-)
+})
 
 local toggleclaimrewards = Tabs.Misc:CreateToggle("ClaimFreeRewards", {
-Title = "Claim Time Rewards",
-Description = "Claims All time rewards",
-Callback = function(Value)
-    task.spawn(function()
-        while true do
-            for i = 1, 8 do
-                game:GetService("ReplicatedStorage").rEvents.freeGiftClaimRemote:InvokeServer("claimGift", i)
+    Title = "Claim Time Rewards",
+    Description = "Claims All time rewards",
+    Callback = function(Value)
+        task.spawn(function()
+            while true do
+                for i = 1, 8 do
+                    game:GetService("ReplicatedStorage").rEvents.freeGiftClaimRemote:InvokeServer("claimGift", i)
+                end
+                task.wait(1)
             end
-            task.wait(1)
-        end
-    end)
-end)
-)
+        end)
+    end
+})
