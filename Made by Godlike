@@ -10,6 +10,8 @@ local whitelistedUsers = {
     "LILTJAYISTHEBEST129",
     "Celestialshadows",
     "Grinding_AccIdk99",
+    "HY4PER_BLITZ",
+    "toni_sein",
 }
 
 -- Function to check if player is whitelisted
